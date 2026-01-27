@@ -222,8 +222,12 @@ export default function AppleHealthPage({ data, availableYears }: Props) {
     : yearData.dailyData.filter(d => d.date.slice(5, 7) === selectedMonth);
 
   const today = new Date().toISOString().slice(0, 10);
-  const maxDate = selectedYear === 'all' ? today : `${selectedYear}-12-31`;
-  const firstDate = filteredDaily[0]?.date || today;
+  const maxDate = selectedMonth !== 'all' && selectedYear !== 'all'
+    ? new Date(parseInt(selectedYear), parseInt(selectedMonth), 0).toISOString().slice(0, 10)
+    : selectedYear === 'all' ? today : `${selectedYear}-12-31`;
+  const firstDate = selectedMonth !== 'all' && selectedYear !== 'all'
+    ? `${selectedYear}-${selectedMonth}-01`
+    : filteredDaily[0]?.date || today;
 
   // Recalculate stats for filtered period
   const avgSteps = (() => {

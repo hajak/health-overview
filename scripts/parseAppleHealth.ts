@@ -37,11 +37,35 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 
-// Daily aggregations
-const dailySteps = new Map<string, number>();
-const dailyActiveCalories = new Map<string, number>();
-const dailyDistance = new Map<string, number>();
-const dailyExerciseMinutes = new Map<string, number>();
+// Summable metrics keyed by date, then by source device to avoid double-counting
+// Apple Health exports separate records from iPhone + Apple Watch for the same time period
+interface SourcedTotal {
+  bySource: Map<string, number>;
+}
+
+function getOrCreateSourced(map: Map<string, SourcedTotal>, date: string): SourcedTotal {
+  if (!map.has(date)) map.set(date, { bySource: new Map() });
+  return map.get(date)!;
+}
+
+function addToSource(sourced: SourcedTotal, source: string, value: number): void {
+  sourced.bySource.set(source, (sourced.bySource.get(source) || 0) + value);
+}
+
+// Pick the highest single-source total to avoid double-counting across devices
+function resolveDailyTotal(sourced: SourcedTotal): number {
+  let maxTotal = 0;
+  for (const total of sourced.bySource.values()) {
+    if (total > maxTotal) maxTotal = total;
+  }
+  return maxTotal;
+}
+
+// Daily aggregations — tracked per source device to deduplicate
+const dailyStepsBySource = new Map<string, SourcedTotal>();
+const dailyCaloriesBySource = new Map<string, SourcedTotal>();
+const dailyDistanceBySource = new Map<string, SourcedTotal>();
+const dailyExerciseBySource = new Map<string, SourcedTotal>();
 const dailyHeartRates = new Map<string, number[]>();
 const dailyRestingHR = new Map<string, number[]>();
 const dailyHRV = new Map<string, number[]>();
@@ -80,6 +104,9 @@ function parseRecordLine(line: string): void {
   const endDateMatch = line.match(/endDate="([^"]+)"/);
   const endDateStr = endDateMatch ? endDateMatch[1] : startDateStr;
 
+  const sourceMatch = line.match(/sourceName="([^"]+)"/);
+  const sourceName = sourceMatch ? sourceMatch[1] : 'unknown';
+
   // Calculate duration in minutes for sleep records
   const getDurationMinutes = (): number => {
     const start = new Date(startDateStr.replace(' +', '+').replace(' ', 'T'));
@@ -104,13 +131,13 @@ function parseRecordLine(line: string): void {
   switch (type) {
     case 'HKQuantityTypeIdentifierStepCount':
       if (numValue !== null && !isNaN(numValue)) {
-        dailySteps.set(date, (dailySteps.get(date) || 0) + numValue);
+        addToSource(getOrCreateSourced(dailyStepsBySource, date), sourceName, numValue);
       }
       break;
 
     case 'HKQuantityTypeIdentifierActiveEnergyBurned':
       if (numValue !== null && !isNaN(numValue)) {
-        dailyActiveCalories.set(date, (dailyActiveCalories.get(date) || 0) + numValue);
+        addToSource(getOrCreateSourced(dailyCaloriesBySource, date), sourceName, numValue);
       }
       break;
 
@@ -120,13 +147,13 @@ function parseRecordLine(line: string): void {
         const unit = unitMatch ? unitMatch[1] : 'm';
         let distanceM = numValue;
         if (unit === 'km') distanceM = numValue * 1000;
-        dailyDistance.set(date, (dailyDistance.get(date) || 0) + distanceM);
+        addToSource(getOrCreateSourced(dailyDistanceBySource, date), sourceName, distanceM);
       }
       break;
 
     case 'HKQuantityTypeIdentifierAppleExerciseTime':
       if (numValue !== null && !isNaN(numValue)) {
-        dailyExerciseMinutes.set(date, (dailyExerciseMinutes.get(date) || 0) + numValue);
+        addToSource(getOrCreateSourced(dailyExerciseBySource, date), sourceName, numValue);
       }
       break;
 
@@ -260,8 +287,10 @@ function buildDailyData(): DailyData[] {
   const allDates = new Set<string>();
 
   // Collect all dates from all data sources
-  [dailySteps, dailyActiveCalories, dailyDistance, dailyHeartRates,
-   dailyHRV, dailyRestingHR, dailyRespiratoryRate, dailyOxygenSaturation,
+  [dailyStepsBySource, dailyCaloriesBySource, dailyDistanceBySource, dailyExerciseBySource].forEach(map => {
+    map.forEach((_, date) => allDates.add(date));
+  });
+  [dailyHeartRates, dailyHRV, dailyRestingHR, dailyRespiratoryRate, dailyOxygenSaturation,
    sleepInBed, sleepAsleep, sleepCore, sleepDeep, sleepREM].forEach(map => {
     map.forEach((_, date) => allDates.add(date));
   });
@@ -294,12 +323,17 @@ function buildDailyData(): DailyData[] {
     const sleepFromStages = core + deep + rem;
     const totalSleep = sleepFromStages > 0 ? sleepFromStages : unspecified;
 
+    const steps = dailyStepsBySource.has(date) ? resolveDailyTotal(dailyStepsBySource.get(date)!) : 0;
+    const activeCalories = dailyCaloriesBySource.has(date) ? resolveDailyTotal(dailyCaloriesBySource.get(date)!) : 0;
+    const distance = dailyDistanceBySource.has(date) ? resolveDailyTotal(dailyDistanceBySource.get(date)!) : 0;
+    const exerciseMinutes = dailyExerciseBySource.has(date) ? resolveDailyTotal(dailyExerciseBySource.get(date)!) : 0;
+
     dailyData.push({
       date,
-      steps: Math.round(dailySteps.get(date) || 0),
-      activeCalories: Math.round(dailyActiveCalories.get(date) || 0),
-      distance: Math.round(dailyDistance.get(date) || 0),
-      exerciseMinutes: Math.round(dailyExerciseMinutes.get(date) || 0),
+      steps: Math.round(steps),
+      activeCalories: Math.round(activeCalories),
+      distance: Math.round(distance),
+      exerciseMinutes: Math.round(exerciseMinutes),
       standHours: 0,
       restingHeartRate: restingHR,
       avgHeartRate: avgHR,

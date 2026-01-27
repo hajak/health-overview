@@ -198,8 +198,12 @@ export default function SleepPage({ data, availableYears }: Props) {
     : yearData.sleepData.filter(s => s.date.slice(5, 7) === selectedMonth);
 
   const today = new Date().toISOString().slice(0, 10);
-  const maxDate = selectedYear === 'all' ? today : `${selectedYear}-12-31`;
-  const firstDate = filteredSleep[0]?.date || today;
+  const maxDate = selectedMonth !== 'all' && selectedYear !== 'all'
+    ? new Date(parseInt(selectedYear), parseInt(selectedMonth), 0).toISOString().slice(0, 10)
+    : selectedYear === 'all' ? today : `${selectedYear}-12-31`;
+  const firstDate = selectedMonth !== 'all' && selectedYear !== 'all'
+    ? `${selectedYear}-${selectedMonth}-01`
+    : filteredSleep[0]?.date || today;
 
   const formatSleep = (mins: number | null): string => {
     if (mins === null) return '-';
