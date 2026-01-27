@@ -1,32 +1,29 @@
 import Link from 'next/link'
 import React from 'react'
-import { RiHeartPulseFill,RiMentalHealthFill } from 'react-icons/ri'
-import {GiNightSleep} from 'react-icons/gi'
-import {CgGym} from 'react-icons/cg'
-import {MdDashboard,MdFoodBank,MdOutlineHelp,MdLogout } from 'react-icons/md'
+import { RiHeartPulseFill } from 'react-icons/ri'
+import { GiNightSleep } from 'react-icons/gi'
+import { MdDashboard } from 'react-icons/md'
+import { TbTestPipe } from 'react-icons/tb'
+import { SiStrava } from 'react-icons/si'
+import { FaApple } from 'react-icons/fa'
 import NavLink from './NavLink'
 
 const Navbar = () => {
     return (
         <div className='bg-black flex-[.2] md:h-[100vh] flex items-center md:items-start md:flex-col gap-4 overflow-hidden'>
             <Link href="/">
-                <div className='md:w-full md:mt-4 flex gap-2 text-2xl items-center text-white p-4'>
-                    <RiHeartPulseFill className='text-2xl' />
-                    <span>H.care</span>
+                <div className='md:w-full md:mt-4 flex gap-2 text-2xl items-center text-white p-4 cursor-pointer'>
+                    <RiHeartPulseFill className='text-2xl text-red-500' />
+                    <span>Health</span>
                 </div>
             </Link>
             <div className="flex md:flex-col ml-auto mr-5 text-white items-center md:items-stretch md:w-full md:gap-4 md:py-4 md:pl-4">
-                <NavLink text = "Dashboard" address={"/"} icon = {<MdDashboard />} />
-                <NavLink text = "Food" icon = {<MdFoodBank />} address ="/foodnutrition" />
-                <NavLink text = "Sleep" icon = {<GiNightSleep />} address ="/sleep" />
-                <NavLink text = "Excercise" icon = {<CgGym />} address ="/excercise" />
-                <NavLink text = "Mental Heath" icon = {<RiMentalHealthFill />} address ="/mentalhealth" />
-                <hr className='bg-white ml-3 hidden md:block my-3' />
-                <NavLink text = "Help" icon = {<MdOutlineHelp />} address ="/help" />
-                {/* <NavLink type= "logout" text = "Logout" icon = {<MdLogout />}address = "#" /> */}
+                <NavLink text="Dashboard" address="/" icon={<MdDashboard />} />
+                <NavLink text="Running" icon={<SiStrava />} address="/activity-overview" />
+                <NavLink text="Apple Health" icon={<FaApple />} address="/apple-health" />
+                <NavLink text="Sleep" icon={<GiNightSleep />} address="/sleep" />
+                <NavLink text="Lab Results" icon={<TbTestPipe />} address="/lab-results" />
             </div>
-
-            
         </div>
     )
 }

@@ -1,53 +1,136 @@
-# H.care
-![Screenshot 2022-11-23 225900](https://user-images.githubusercontent.com/85030597/203619867-2762f161-42ad-47fe-8c23-6573cb009497.png)\
-H.care is a healthcare dashboard that caters to your healthcare needs
-[https://healthcare-theta.vercel.app/](https://healthcare-theta.vercel.app/)
-## What does it provide?
-1. A dashboard that displays your water consumption, steps, sleep records etc in a graphical way and display health news.
-2. A dashboard that provides nutrient information and shows how much carbs, calories, protien, sugar, etc. you have consumed upon query.
-3. A dashboard that displays your sleep data in graphical way and gives tips on sleeping well.
-4. A dashboard that provides tips to improve your mental health according to your mood.
-5. A dashboard that tracks your activity, displays calories burnt upon query and provides video links for various exercises.
-6. It has a chatbot for your health and fitness concerns
+# Health Overview
 
-## Introduction
-1. H.care is powered by [NextJs](https://nextjs.org/) and [Firebase](https://firebase.google.com/) .
-2. It uses [TailwindCSS](https://tailwindcss.com/docs/guides/nextjs) for styling
-3. It uses [Nutritionix](https://developer.nutritionix.com/) API to display nutrition information and exercise information. What makes this api great is it takes natural language like 'I ate 2 eggs for breakfast today' and returns acurate nutritional information. Same goes for exercise information.
-4. It uses [nivo.rocks](https://nivo.rocks/) for graphical charts. A great collection of components built on top of [React](https://reactjs.org/) and [D3JS](https://d3js.org/) .
-5. It uses [NextAuth](https://next-auth.js.org/) for authentication.
-6. Firebase provides database for storing data and provides functions to fetch data in realtime [Docs](https://firebase.google.com/docs/build) .
-7. It uses [React-Icons](https://react-icons.github.io/react-icons) for icons.
-8. It uses [TheNewsApi](https://www.thenewsapi.com/) for news fetching . It is great for getting filtered news. 
+A personal health dashboard and reporting tool that aggregates data from multiple sources into a unified view. Built with Next.js, TypeScript, and Nivo charts.
 
+## Data Sources
+
+| Source | What it provides | How to get the data |
+|--------|-----------------|---------------------|
+| **1177 / Swedish Healthcare** | Lab results (blood panels, biomarkers) | Export from 1177.se, place Excel file in `data/FILES/` |
+| **Strava** | Running and activity data | OAuth via `pnpm run strava:auth`, then `pnpm run strava:download` |
+| **Oura Ring** | Sleep, HRV, SpO2, readiness, respiratory rate | OAuth via `pnpm run oura:auth`, then `pnpm run oura:download` |
+| **Apple Watch** | Steps, heart rate, VO2 max, sleep, exercise | Export from Apple Health app, parse with `pnpm run apple:parse` |
 
 ## Getting Started
-This project requires you to have a **GOOGLE_CLIENT_ID** and **GOOGLE_CLIENT_SECRET** which you will receive when you will create a new Firebase App [here](https://https://console.firebase.google.com/).\
-A whole step by step process is [here](https://scribehow.com/shared/Google_Workflow__0XyPlLRDSCCrRPi_JlJDIg).\
-It will also require **NEXT_PUBLIC_NEWS_API_TOKEN** which is a api key that you can get [here](https://www.thenewsapi.com/) 
 
-### Running on local machine
-1. Fork the repository and clone it in a local directory.
-2. Open the terminal in the directory and run the following command: \
-`npm i`
-3. Upon completion create a 'env.local' file in the same directory and write the following in it and save: \
-`GOOGLE_CLIENT_ID=*YOUR ID*` \
-`GOOGLE_CLIENT_SECRET=*YOUR SECRET*` \
-`NEXT_PUBLIC_NEWS_API_TOKEN=*YOUR NEWS API TOKEN*`
-4. Run `npm run dev` in the terminal, this will start the local server.
-5. Voila! You are ready. :joy: \
-The app should be running at http://localhost:3000 by default.
+This project was built using [Claude Code](https://claude.ai/code).
 
-## Dashboard
+### Prerequisites
 
-| ![Disp1](https://user-images.githubusercontent.com/85030597/203629174-c44c7763-e430-4aa4-b205-fb38bf19feeb.png) | ![disp2](https://user-images.githubusercontent.com/85030597/203629243-b72529dc-5587-4bb0-b281-3258defc7779.png) |
-| ---------------------------------------- | ---------------------------------------- |
-| ![disp3](https://user-images.githubusercontent.com/85030597/203629972-57fdafc4-447c-49b0-aee4-6f982b39cb4d.png) | ![disp4](https://user-images.githubusercontent.com/85030597/203630033-1f61e654-958b-45ce-af1f-a472fd76996f.png) |
-| ![disp5](https://user-images.githubusercontent.com/85030597/203632695-3a1954b9-2e69-464c-905f-a8f0230f4ce7.png) | ![disp6](https://user-images.githubusercontent.com/85030597/203632727-054c453e-0667-4386-87b9-11dc56d5633c.png) |
+- Node.js 18+
+- [pnpm](https://pnpm.io/) package manager
 
-# License
-This project is licensed under the MIT license. Feel free to use it and if you want to contribute, please feel free to fork the project and make a pull request. Thanks!
+### Setup
 
-# Contributors Guide 🥰
-Thanks for considering to contribute to the project. If you have any questions, please feel free to contact me at [Twitter](https://twitter.com/heyyakash). 
+```bash
+# Install dependencies
+pnpm install
 
+# Create environment file
+cp .env.example .env.local
+# Then fill in your API credentials (see Environment Variables below)
+```
+
+### Environment Variables
+
+Create a `.env.local` file with:
+
+```
+STRAVA_CLIENT_ID=your_strava_client_id
+STRAVA_CLIENT_SECRET=your_strava_client_secret
+STRAVA_ACCESS_TOKEN=your_strava_access_token
+STRAVA_REFRESH_TOKEN=your_strava_refresh_token
+OURA_ACCESS_TOKEN=your_oura_access_token
+OURA_CLIENT_ID=your_oura_client_id
+OURA_CLIENT_SECRET=your_oura_client_secret
+```
+
+**Strava:** Create an app at [strava.com/settings/api](https://www.strava.com/settings/api) to get your client ID and secret.
+
+**Oura:** Create an app at [cloud.ouraring.com/oauth/applications](https://cloud.ouraring.com/oauth/applications).
+
+### Data Pipeline
+
+Run these scripts to populate your local data directory:
+
+```bash
+# 1. Authorize and download from external APIs
+pnpm run strava:auth        # One-time Strava OAuth setup
+pnpm run strava:download    # Download all Strava activities
+
+pnpm run oura:auth          # One-time Oura OAuth setup
+pnpm run oura:download      # Download all Oura daily data
+
+# 2. Parse local data exports
+pnpm run lab:parse          # Parse lab results from Excel (data/FILES/Provsvar.xlsx)
+
+# 3. Build the unified dataset
+pnpm run build:unified      # Merges all sources into data/unified/daily.json
+
+# 4. Generate PDF health report
+pnpm run report:generate    # Outputs to reports/health-report-YYYY-MM-DD.pdf
+```
+
+### Run the Dashboard
+
+```bash
+pnpm run dev    # Start dev server at http://localhost:3000
+pnpm run build  # Production build
+pnpm run start  # Start production server
+```
+
+## PDF Health Report
+
+Run `pnpm run report:generate` to produce a comprehensive PDF report containing:
+
+- **Cover page** with overall health summary
+- **Key metrics dashboard** (resting HR, HRV, VO2 max, steps, sleep, SpO2, BMI)
+- **Cardiovascular & fitness analysis** with running stats and monthly distance breakdown
+- **Sleep analysis** with stage breakdown, SpO2, and respiratory rate
+- **Lab results table** with reference ranges, status indicators, and trend arrows
+- **Strengths & areas for attention** based on all available data
+- **Recommendations** for supplementation and monitoring
+
+Output: `reports/health-report-YYYY-MM-DD.pdf`
+
+## Project Structure
+
+```
+scripts/                    Data pipeline scripts
+  authorizeStrava.ts        Strava OAuth flow
+  downloadStravaData.ts     Strava API client
+  authorizeOura.ts          Oura OAuth flow
+  downloadOuraData.ts       Oura API client
+  parseLabData.ts           Parse lab Excel exports
+  parseAppleHealth.ts       Parse Apple Health XML
+  buildUnifiedData.ts       Merge all sources by date
+  generateHealthReport.ts   PDF report generator
+
+types/                      TypeScript type definitions
+  unified.ts                UnifiedDailyRecord, source priorities
+  labResults.ts             Lab result types, reference ranges
+  strava.ts                 Strava activity types
+
+data/                       Local data (gitignored)
+  lab_results.json          Parsed lab reports
+  unified/daily.json        Merged daily health metrics
+  strava/activities.json    Strava activities
+  oura/                     Oura ring data files
+  apple_health/             Apple Health exports
+
+components/                 React dashboard components
+pages/                      Next.js pages
+```
+
+## Tech Stack
+
+- **Framework:** Next.js 13, React 18
+- **Language:** TypeScript
+- **Charts:** Nivo (bar, line, calendar, pie, scatterplot)
+- **PDF:** pdfkit
+- **Styling:** Tailwind CSS
+- **Auth:** NextAuth.js + Firebase
+
+## License
+
+MIT

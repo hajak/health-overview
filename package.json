@@ -1,32 +1,54 @@
 {
   "name": "healthcarehack",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "strava:download": "tsx scripts/downloadStravaData.ts",
+    "strava:auth": "tsx scripts/authorizeStrava.ts",
+    "oura:auth": "tsx scripts/authorizeOura.ts",
+    "oura:download": "tsx scripts/downloadOuraData.ts",
+    "lab:parse": "tsx scripts/parseLabData.ts",
+    "report:generate": "tsx scripts/generateHealthReport.ts"
   },
   "dependencies": {
-    "@nivo/bar": "^0.80.0",
-    "@nivo/bump": "^0.80.0",
-    "@nivo/line": "^0.80.0",
+    "@nivo/bar": "^0.99.0",
+    "@nivo/bump": "^0.99.0",
+    "@nivo/calendar": "^0.99.0",
+    "@nivo/core": "0.99.0",
+    "@nivo/line": "^0.99.0",
+    "@nivo/pie": "^0.99.0",
+    "@nivo/scatterplot": "^0.99.0",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.2",
     "firebase": "^9.13.0",
     "moment": "^2.29.4",
     "next": "13.0.2",
     "next-auth": "^4.16.4",
+    "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.17.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.39.4",
     "react-icons": "^4.6.0",
-    "recoil": "^0.7.6"
+    "recoil": "^0.7.6",
+    "uuid": "^13.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/node": "^25.0.10",
+    "@types/pdfkit": "^0.17.4",
+    "@types/pdf-parse": "^1.1.5",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^11.0.0",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.18",
-    "tailwindcss": "^3.2.3"
+    "tailwindcss": "^3.2.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

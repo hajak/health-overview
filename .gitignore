@@ -28,6 +28,11 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# personal health data & tokens
+/data/
+!/data/biomarkers.ts
+/reports/
+
 # vercel
 .vercel
 
