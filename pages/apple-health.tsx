@@ -314,7 +314,7 @@ export default function AppleHealthPage({ data, availableYears }: Props) {
   };
 
   // MA chart helper
-  const maProps = (series: { id: string; data: any[] }[], maBounds: { min: number; max: number } | null, baseColor: string, rgbaColor: string, defaultMin: number | string = 'auto', defaultMax: number | string = 'auto') => ({
+  const maProps = (series: { id: string; data: any[] }[], maBounds: { min: number; max: number } | null, baseColor: string, rgbaColor: string, defaultMin: number | 'auto' = 'auto', defaultMax: number | 'auto' = 'auto') => ({
     colors: showMA && series.length > 1 ? [rgbaColor, '#ef4444'] : [baseColor],
     pointSize: showMA ? 0 : 3,
     enableArea: !showMA,

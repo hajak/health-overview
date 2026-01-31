@@ -127,12 +127,7 @@ export default function BiomarkerTrendChart({
         }}
         colors={{ scheme: 'category10' }}
         pointSize={10}
-        pointColor={(point: { data: { status?: string } }) => {
-          const status = point.data.status;
-          if (status === 'normal') return '#22c55e';
-          if (status === 'critical') return '#ef4444';
-          return '#f59e0b';
-        }}
+        pointColor={{ theme: 'background' }}
         pointBorderWidth={2}
         pointBorderColor={{ from: 'serieColor' }}
         enableArea={false}

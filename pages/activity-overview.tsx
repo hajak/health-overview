@@ -129,7 +129,7 @@ function MaLabelsLayer({ series }: { series: any[] }) {
   );
 }
 
-const defaultLayers = ['grid', 'markers', 'axes', 'areas', 'crosshair', 'lines', 'points', 'slices', 'mesh', 'legends'] as const;
+const defaultLayers: readonly string[] = ['grid', 'markers', 'axes', 'areas', 'crosshair', 'lines', 'points', 'slices', 'mesh', 'legends'];
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const stravaPath = path.join(process.cwd(), 'DATA', 'strava', 'activities.json');
@@ -529,7 +529,7 @@ export default function ActivityOverview({ data, availableYears }: Props) {
                 curve="monotoneX"
                 lineWidth={showMA ? 1 : 2}
                 legends={showMA && distanceLineData.length > 1 ? [{ anchor: 'top-right', direction: 'row' as const, itemWidth: 100, itemHeight: 20, symbolSize: 10, translateY: -10 }] : []}
-                layers={showMA ? [...defaultLayers, MaLabelsLayer] : undefined}
+                layers={showMA ? [...defaultLayers, MaLabelsLayer] as any : undefined}
               />
             ) : (
               <div className="h-full flex items-center justify-center text-gray-400">No data</div>
@@ -565,7 +565,7 @@ export default function ActivityOverview({ data, availableYears }: Props) {
                 useMesh={true}
                 lineWidth={showMA ? 1 : 2}
                 legends={showMA && paceLineData.length > 1 ? [{ anchor: 'top-right', direction: 'row' as const, itemWidth: 100, itemHeight: 20, symbolSize: 10, translateY: -10 }] : []}
-                layers={showMA ? [...defaultLayers, MaLabelsLayer] : undefined}
+                layers={showMA ? [...defaultLayers, MaLabelsLayer] as any : undefined}
               />
             ) : (
               <div className="h-full flex items-center justify-center text-gray-400">No data</div>

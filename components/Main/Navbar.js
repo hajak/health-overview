@@ -3,7 +3,7 @@ import React from 'react'
 import { RiHeartPulseFill } from 'react-icons/ri'
 import { GiNightSleep } from 'react-icons/gi'
 import { MdDashboard } from 'react-icons/md'
-import { TbTestPipe } from 'react-icons/tb'
+import { TbTestPipe, TbBulb } from 'react-icons/tb'
 import { SiStrava } from 'react-icons/si'
 import { FaApple } from 'react-icons/fa'
 import NavLink from './NavLink'
@@ -23,6 +23,7 @@ const Navbar = () => {
                 <NavLink text="Apple Health" icon={<FaApple />} address="/apple-health" />
                 <NavLink text="Sleep" icon={<GiNightSleep />} address="/sleep" />
                 <NavLink text="Lab Results" icon={<TbTestPipe />} address="/lab-results" />
+                <NavLink text="Recommendations" icon={<TbBulb />} address="/recommendations" />
             </div>
         </div>
     )

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as XLSX from 'xlsx';
-import { BIOMARKERS, findBiomarkerBySwedishName } from '../DATA/biomarkers';
+import { BIOMARKERS, findBiomarkerBySwedishName } from '../data/biomarkers';
 import { LabCategory, ResultStatus, ReferenceRange, determineStatus } from '../types/labResults';
 
 interface ParsedLabResult {

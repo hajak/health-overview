@@ -189,7 +189,7 @@ export default function Home({ data, availableYears }) {
             {/* Charts Row 1 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="bg-white rounded-xl p-5 shadow-sm border">
-                <h2 className="font-semibold text-gray-900 mb-3">Monthly Running Distance</h2>
+                <h2 className="font-semibold text-gray-900 mb-3">Cumulative Running Distance</h2>
                 <div className="h-48">
                   {monthlyRunData[0].data.length > 0 ? (
                     <ResponsiveLine
@@ -340,7 +340,7 @@ function processDataForYear(runs, unifiedDays, labReports, year) {
     monthlyMap.set(month, existing)
   }
 
-  const monthlyRuns = Array.from(monthlyMap.entries())
+  const sortedMonths = Array.from(monthlyMap.entries())
     .map(([month, data]) => ({
       month: month.slice(2),
       monthDate: `${month}-01`,
@@ -349,6 +349,16 @@ function processDataForYear(runs, unifiedDays, labReports, year) {
     }))
     .sort((a, b) => a.monthDate.localeCompare(b.monthDate))
     .slice(-12)
+
+  // Convert to cumulative distance
+  let cumulativeDistance = 0
+  const monthlyRuns = sortedMonths.map(m => {
+    cumulativeDistance += m.distance
+    return {
+      ...m,
+      distance: cumulativeDistance
+    }
+  })
 
   const totalDistance = Math.round(yearRuns.reduce((sum, r) => sum + r.distance, 0) / 1000)
 

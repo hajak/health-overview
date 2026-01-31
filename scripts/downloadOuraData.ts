@@ -73,7 +73,7 @@ async function main() {
 
   ensureDirectories();
 
-  const { startDate, endDate } = getDateRange(365);
+  const { startDate, endDate } = getDateRange();
   console.log(`\nFetching Oura data from ${startDate} to ${endDate}\n`);
 
   try {

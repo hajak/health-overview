@@ -1339,7 +1339,7 @@ function buildStrengthsWeaknessesPage(
       .fontSize(9)
       .fillColor(COLORS.darkGray)
       .text(s, 68, y, { width: 475 });
-    y += Math.ceil(doc.heightOfString(s, { width: 475, fontSize: 9 }) / 14) * 14 + 6;
+    y += Math.ceil(doc.heightOfString(s, { width: 475 }) / 14) * 14 + 6;
   }
 
   // Weaknesses
@@ -1397,7 +1397,7 @@ function buildStrengthsWeaknessesPage(
       .fontSize(9)
       .fillColor(COLORS.darkGray)
       .text(w, 68, y, { width: 475 });
-    y += Math.ceil(doc.heightOfString(w, { width: 475, fontSize: 9 }) / 14) * 14 + 6;
+    y += Math.ceil(doc.heightOfString(w, { width: 475 }) / 14) * 14 + 6;
   }
 
   drawPageFooter(doc, 6);
@@ -1508,7 +1508,7 @@ function buildRecommendationsPage(
         .fontSize(9)
         .fillColor(COLORS.darkGray)
         .text(item, 68, y, { width: 475 });
-      y += Math.ceil(doc.heightOfString(item, { width: 475, fontSize: 9 }) / 14) * 14 + 4;
+      y += Math.ceil(doc.heightOfString(item, { width: 475 }) / 14) * 14 + 4;
     }
 
     y += 15;

@@ -20,10 +20,11 @@ export default function LabResultsTable({
       day: 'numeric',
     });
 
-  const sourceLabel = {
+  const sourceLabel: Record<string, string> = {
     werlabs: 'Werlabs',
     hospital: 'Hospital',
     manual: 'Manual Entry',
+    aleris: 'Aleris',
   };
 
   return (
